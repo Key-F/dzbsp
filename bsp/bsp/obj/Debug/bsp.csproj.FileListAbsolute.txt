@@ -1,0 +1,6 @@
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\bin\Debug\bsp.exe.config
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\bin\Debug\bsp.exe
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\bin\Debug\bsp.pdb
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\obj\Debug\bsp.csprojResolveAssemblyReference.cache
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\obj\Debug\bsp.exe
+c:\users\keyf\documents\visual studio 2013\Projects\bsp\bsp\obj\Debug\bsp.pdb

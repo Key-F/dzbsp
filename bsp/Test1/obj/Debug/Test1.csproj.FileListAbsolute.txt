@@ -1,0 +1,7 @@
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\bin\Debug\Test1.dll
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\bin\Debug\Test1.pdb
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\bin\Debug\nunit.framework.dll
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\bin\Debug\nunit.framework.xml
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\obj\Debug\Test1.csprojResolveAssemblyReference.cache
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\obj\Debug\Test1.dll
+C:\Users\keyf\documents\visual studio 2013\Projects\bsp\Test1\obj\Debug\Test1.pdb
