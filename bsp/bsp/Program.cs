@@ -14,7 +14,10 @@ namespace bsp
         BSPTreePolygon[] PolygonSet;
         BSPTree RightChild;
         BSPTree LeftChild;
-        public BSPTree() { } // Построение дерева 
+        public BSPTree() { 
+        
+        
+        } // Построение дерева 
         void Draw() { } // Алгоритм художника
     }
     public  class BSPTreePolygon {
@@ -32,51 +35,70 @@ namespace bsp
         }
     class Program
     {
-        static void Main(string[] args) {
-Start:  // Ввод адреса файла
+        static string VVodFileName() { // Ввод адреса файла
             Console.WriteLine("Введите адрес файла с координатами");
             string FileName = Console.ReadLine();
-            string[] coordpov;
-            if (System.IO.File.Exists(FileName) == false) { // Это тест
+            
+            if (System.IO.File.Exists(FileName) == false)
+            { // Это тест
                 Console.WriteLine("Файла не существует");
-                goto Start;
+                VVodFileName();
             }
-Start1:  // Ввод координат наблюдателя
+            return FileName;
+        }
+
+        static string[] VVodCoordPOV() { // Ввод координат наблюдателя
             Console.WriteLine("Введите координаты точки обзора наблюдателя");
-            string coords = Console.ReadLine();          
+            string coords = Console.ReadLine();
+            string[] coordpov;
             coordpov = coords.Split(new char[] { ' ' });
-            for (int i = 0; i < 3; i++ ) {
+            for (int i = 0; i < 3; i++)
+            {
                 try { Convert.ToDouble(coordpov[i]); }
-                catch {
-                    try { 
-                        if (coordpov[i] == null) 
-                        Console.WriteLine(""); }
-                    //if (coordpov[i] == null) 
-                    catch{
-                        Console.WriteLine("Не хватает данных");
-                        goto Start1; // Обратно к вводу координат наблюдателя
+                catch
+                {
+                    try
+                    {
+                        if (coordpov[i] == null)
+                            Console.WriteLine("");
                     }
-                        
+                    //if (coordpov[i] == null) 
+                    catch
+                    {
+                        Console.WriteLine("Не хватает данных");
+                        VVodCoordPOV(); // Обратно к вводу координат наблюдателя
+                    }
+
                     //else
                     Console.WriteLine("Это не цифры"); // Тоже тест
-                    goto Start1; // Обратно к вводу координат наблюдателя
+                    VVodCoordPOV(); // Обратно к вводу координат наблюдателя
                 }
-                
+
             }
-            try {
-                if (coordpov[3] != null) {
+            try
+            {
+                if (coordpov[3] != null)
+                {
                     Console.WriteLine("Нужно ввести только 3 числа");
-                    goto Start1; // Обратно к вводу координат наблюдателя
+                    VVodCoordPOV(); // Обратно к вводу координат наблюдателя
                 }
-            } 
-            catch{
-               // Console.WriteLine("Нужно ввести только 3 числа");
-               // goto Start1; // Обратно к вводу координат наблюдателя
             }
+            catch
+            {
+                // Console.WriteLine("Нужно ввести только 3 числа");
+                // goto Start1; // Обратно к вводу координат наблюдателя
+            }
+            return coordpov;
+        }
+        static void Main(string[] args) {
+            string FileName = VVodFileName();
+            string[] coordpov = VVodCoordPOV();
             getcoords(FileName);
+            //BSPTreePoly[1]
 
         }
-        public static void getcoords(string FileName) {
+        public static BSPTreePolygon[] getcoords(string FileName)
+        {
 
             string[] lines = File.ReadAllLines(FileName);
             string[] coord;
@@ -106,6 +128,7 @@ Start1:  // Ввод координат наблюдателя
                 Console.WriteLine(i);
                 i++;
             }
+            return BSPTreePoly;
             Console.ReadLine();
        }
 }
