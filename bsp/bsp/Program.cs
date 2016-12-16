@@ -15,33 +15,39 @@ namespace bsp
         BSPTree RightChild;
         BSPTree LeftChild;
         public BSPTree(BSPTreePolygon root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
-            /* double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
+             double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n; i++)
              {
-                 double Temp1 = divline[0] * PolygonSet[i].Point1[0] + divline[1] * PolygonSet[i].Point1[1] + divline[2]; // A*x+B*y+C временная переменная для удобства, точка 1 отрезка
-                 double Temp2 = divline[0] * PolygonSet[i].Point2[0] + divline[1] * PolygonSet[i].Point2[1] + divline[2]; // аналогично, но для второй точки отрезка
-                 if ((Temp1 >= 0) && (Temp1 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
+                 double Temp1 = divline[0] * PolygonSet[i].Point1.X + divline[1] * PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, точка 1 отрезка
+                 double Temp2 = divline[0] * PolygonSet[i].Point2.X + divline[1] * PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
+                 if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
                  {
-                     // Добавляем этот отрезок в RightChild
+                     // Добавляем этот отрезок в RightChild (front)
                  }
-                 if ((Temp1 < 0) && (Temp1 < 0))
+                 if ((Temp1 < 0) && (Temp2 < 0))
                  {
-                     // Добавляем этот отрезок в LeftChild
+                     // Добавляем этот отрезок в LeftChild (back)
                  }
-                 if ((Temp1 >= 0) && (Temp1 < 0)) // Отрезок пересекается разделяющей прямой
+                 if ((Temp1 >= 0) && (Temp2 < 0)) // Отрезок пересекается разделяющей прямой
                  {
                     // double[] otrezline = geturav(PolygonSet[i].Point1, PolygonSet[i].Point2); // Прямая, задающая отрезок (который пересекает разделяющая прямая)
-                   //  Point DivPoint = Intersection (Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2 )
-                     {
+                     Point DivPoint = Intersection(Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
+                     // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в RightChild (front)
+                     // Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в LeftChild (back)                      
+                 }  
+                 if ((Temp1 < 0) && (Temp2 >= 0)) // Отрезок пересекается разделяющей прямой
+                 {
+                     Point DivPoint = Intersection(Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
+                     // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в LeftChild (back)
+                     // Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в RightChild (front) 
+                 }
 
-                     }
-                 }   
-             } */
+             } 
 
         } // Построение дерева 
         void Draw() { } // Алгоритм художника
         //http://www.cyberforum.ru/csharp-beginners/thread1127196.html
-        /*  static public Point Intersection(Point A, Point B, Point C, Point D) // ищем точку пересечения двух прямых (их задают 2 точки)
+          static public Point Intersection(Point A, Point B, Point C, Point D) // ищем точку пересечения двух прямых (их задают 2 точки)
           {
               double xo = A.X, yo = A.Y, zo = A.Z;
               double p = B.X - A.X, q = B.Y - A.Y, r = B.Z - A.Z;
@@ -57,7 +63,7 @@ namespace bsp
                   (q * r1 - q1 * r);
 
               return new Point(x, y, z);
-          } */
+          } 
     }  
     public class Point
     {
@@ -74,13 +80,13 @@ namespace bsp
     }
     public  class BSPTreePolygon {
 
-        public double[] Point1;       // Вершина 1 в полигоне.
-        public double[] Point2;       // Вершина 2 в полигоне.
+        public Point Point1;       // Вершина 1 в полигоне.
+        public Point Point2;       // Вершина 2 в полигоне.
         public Point Point3;       // Вершина 3 в полигоне.
         public double testt;
         public  BSPTreePolygon() {
-            Point1 = new double[3];
-            Point2 = new double[3];
+            Point1 = new Point();
+            Point2 = new Point();
             Point3 = new Point();
         }
 
