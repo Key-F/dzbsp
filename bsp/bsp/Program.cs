@@ -33,8 +33,10 @@ namespace bsp
         }
 
         }
+    
     class Program
     {
+
         static string VVodFileName() { // Ввод адреса файла
             Console.WriteLine("Введите адрес файла с координатами");
             string FileName = Console.ReadLine();
@@ -93,10 +95,21 @@ namespace bsp
         static void Main(string[] args) {
             string FileName = VVodFileName();
             string[] coordpov = VVodCoordPOV();
-            getcoords(FileName);
+            
             //BSPTreePoly[1]
+            BSPTreePolygon[] BSPTreePolygon = getcoords(FileName);
+
 
         }
+
+        public static int[] geturav(int[] ycoords, int[] xcoords) { // получаем коэффициенты общего уравнения
+            int[] urav = new int[3]; // A, B, C
+            urav[0] = ycoords[0] - ycoords[1]; // A = y1 - y2
+            urav[1] = xcoords[1] - xcoords[0]; // B = x2 - x1
+            urav[2] = xcoords[0] * ycoords[1] - xcoords[1] * ycoords[0]; // C = x1 * y2 - x2 * y1
+            return urav;        
+        }
+
         public static BSPTreePolygon[] getcoords(string FileName)
         {
 
