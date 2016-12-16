@@ -14,22 +14,74 @@ namespace bsp
         BSPTreePolygon[] PolygonSet;
         BSPTree RightChild;
         BSPTree LeftChild;
-        public BSPTree() { 
-        
-        
+        public BSPTree(BSPTreePolygon root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
+            /* double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
+             for (int i = 0; i < n; i++)
+             {
+                 double Temp1 = divline[0] * PolygonSet[i].Point1[0] + divline[1] * PolygonSet[i].Point1[1] + divline[2]; // A*x+B*y+C временная переменная для удобства, точка 1 отрезка
+                 double Temp2 = divline[0] * PolygonSet[i].Point2[0] + divline[1] * PolygonSet[i].Point2[1] + divline[2]; // аналогично, но для второй точки отрезка
+                 if ((Temp1 >= 0) && (Temp1 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
+                 {
+                     // Добавляем этот отрезок в RightChild
+                 }
+                 if ((Temp1 < 0) && (Temp1 < 0))
+                 {
+                     // Добавляем этот отрезок в LeftChild
+                 }
+                 if ((Temp1 >= 0) && (Temp1 < 0)) // Отрезок пересекается разделяющей прямой
+                 {
+                    // double[] otrezline = geturav(PolygonSet[i].Point1, PolygonSet[i].Point2); // Прямая, задающая отрезок (который пересекает разделяющая прямая)
+                   //  Point DivPoint = Intersection (Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2 )
+                     {
+
+                     }
+                 }   
+             } */
+
         } // Построение дерева 
         void Draw() { } // Алгоритм художника
+        //http://www.cyberforum.ru/csharp-beginners/thread1127196.html
+        /*  static public Point Intersection(Point A, Point B, Point C, Point D) // ищем точку пересечения двух прямых (их задают 2 точки)
+          {
+              double xo = A.X, yo = A.Y, zo = A.Z;
+              double p = B.X - A.X, q = B.Y - A.Y, r = B.Z - A.Z;
+
+              double x1 = C.X, y1 = C.Y, z1 = C.Z;
+              double p1 = D.X - C.X, q1 = D.Y - C.Y, r1 = D.Z - C.Z;
+
+              double x = (xo * q * p1 - x1 * q1 * p - yo * p * p1 + y1 * p * p1) /
+                  (q * p1 - q1 * p);
+              double y = (yo * p * q1 - y1 * p1 * q - xo * q * q1 + x1 * q * q1) /
+                  (p * q1 - p1 * q);
+              double z = (zo * q * r1 - z1 * q1 * r - yo * r * r1 + y1 * r * r1) /
+                  (q * r1 - q1 * r);
+
+              return new Point(x, y, z);
+          } */
+    }  
+    public class Point
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+        public Point() { }
+        public Point(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
     }
     public  class BSPTreePolygon {
 
         public double[] Point1;       // Вершина 1 в полигоне.
         public double[] Point2;       // Вершина 2 в полигоне.
-        public double[] Point3;       // Вершина 3 в полигоне.
+        public Point Point3;       // Вершина 3 в полигоне.
         public double testt;
         public  BSPTreePolygon() {
             Point1 = new double[3];
             Point2 = new double[3];
-            Point3 = new double[3];
+            Point3 = new Point();
         }
 
         }
@@ -101,7 +153,7 @@ namespace bsp
 
 
         }
-
+        // потом перенести geturav
         public static int[] geturav(int[] ycoords, int[] xcoords) { // получаем коэффициенты общего уравнения
             int[] urav = new int[3]; // A, B, C
             urav[0] = ycoords[0] - ycoords[1]; // A = y1 - y2
@@ -109,6 +161,7 @@ namespace bsp
             urav[2] = xcoords[0] * ycoords[1] - xcoords[1] * ycoords[0]; // C = x1 * y2 - x2 * y1
             return urav;        
         }
+
 
         public static BSPTreePolygon[] getcoords(string FileName)
         {
@@ -134,9 +187,9 @@ namespace bsp
                 BSPTreePoly[i].Point2[1] = Convert.ToDouble(coord[4]);
                 BSPTreePoly[i].Point2[2] = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки полигона 
 
-                BSPTreePoly[i].Point3[0] = Convert.ToDouble(coord[6]);
-                BSPTreePoly[i].Point3[1] = Convert.ToDouble(coord[7]);
-                BSPTreePoly[i].Point3[2] = Convert.ToDouble(coord[8]); // Заполнили координаты третьей точки полигона 
+                BSPTreePoly[i].Point3.X = Convert.ToDouble(coord[6]);
+                BSPTreePoly[i].Point3.Y = Convert.ToDouble(coord[7]);
+                BSPTreePoly[i].Point3.Z = Convert.ToDouble(coord[8]); // Заполнили координаты третьей точки полигона 
 
                 Console.WriteLine(i);
                 i++;
