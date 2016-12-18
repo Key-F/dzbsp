@@ -7,14 +7,27 @@ using System.IO;
 
 namespace bsp
 {
-     
 
+    public class BSPNode {
+        public int indexofotr; // индекс отрезка (для 3d - индекс полигона)
+        public BSPNode left;
+        public BSPNode right;
+
+        public BSPNode() {
+            this.indexofotr = 0;
+            this.left = null;
+            this.right = null;
+        }
+
+    }
     public class BSPTree {
-        BSPTreePolygon root;
+        BSPNode root; // Корень
         BSPTreePolygon Divider;
         BSPTreePolygon[] PolygonSet;
         BSPTree RightChild;
         BSPTree LeftChild;
+        BSPTreePolygon[] RightSet; // Набор отрезков справа
+        BSPTreePolygon[] Leftset; // Набор отрезков слева
 
         public static double[] geturav(Point point1, Point point2)
         { // получаем коэффициенты общего уравнения
@@ -24,8 +37,13 @@ namespace bsp
             urav[2] = point1.X * point2.Y - point2.X * point1.Y; // C = x1 * y2 - x2 * y1
             return urav;
         }
+       /* public BSPTreePolygon[] AddToSet(BSPTreePolygon[] Parent, BSPTreePolygon[] Dobav) // Parent - то, куда добавляем. Dobav - то, что добавляем
+        {
 
-        public BSPTree(BSPTreePolygon root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
+            
+        } */
+        public BSPTree(BSPNode root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
+
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n; i++)
              {
@@ -34,6 +52,7 @@ namespace bsp
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
                  {
                      // Добавляем этот отрезок в RightChild (front)
+                     //PolygonSet.RightSet = RightSet + PolygonSet[i];
                  }
                  if ((Temp1 < 0) && (Temp2 < 0))
                  {
