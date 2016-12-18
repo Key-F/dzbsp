@@ -7,6 +7,7 @@ using System.IO;
 
 namespace bsp
 {
+     
 
     public class BSPTree {
         BSPTreePolygon root;
@@ -14,11 +15,21 @@ namespace bsp
         BSPTreePolygon[] PolygonSet;
         BSPTree RightChild;
         BSPTree LeftChild;
+
+        public static double[] geturav(Point point1, Point point2)
+        { // получаем коэффициенты общего уравнения
+            double[] urav = new double[3]; // A, B, C
+            urav[0] = point1.Y - point2.Y; // A = y1 - y2
+            urav[1] = point2.X - point1.X; // B = x2 - x1
+            urav[2] = point1.X * point2.Y - point2.X * point1.Y; // C = x1 * y2 - x2 * y1
+            return urav;
+        }
+
         public BSPTree(BSPTreePolygon root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n; i++)
              {
-                 double Temp1 = divline[0] * PolygonSet[i].Point1.X + divline[1] * PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, точка 1 отрезка
+                 double Temp1 = divline[0] * PolygonSet[i].Point1.X + divline[1] * PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, для точки 1 отрезка
                  double Temp2 = divline[0] * PolygonSet[i].Point2.X + divline[1] * PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
                  {
@@ -185,13 +196,13 @@ namespace bsp
                 BSPTreePoly[i] = new BSPTreePolygon();
                 //double teee = Convert.ToDouble(coord[0]); 
                 //BSPTreePoly[i].testt = Convert.ToDouble(coord[0]);   
-                BSPTreePoly[i].Point1[0] = Convert.ToDouble(coord[0]);                
-                BSPTreePoly[i].Point1[1] = Convert.ToDouble(coord[1]);               
-                BSPTreePoly[i].Point1[2] = Convert.ToDouble(coord[2]); // Заполнили координаты первой точки полигона 
+                BSPTreePoly[i].Point1.X = Convert.ToDouble(coord[0]);                
+                BSPTreePoly[i].Point1.Y = Convert.ToDouble(coord[1]);               
+                BSPTreePoly[i].Point1.Z = Convert.ToDouble(coord[2]); // Заполнили координаты первой точки полигона 
 
-                BSPTreePoly[i].Point2[0] = Convert.ToDouble(coord[3]);
-                BSPTreePoly[i].Point2[1] = Convert.ToDouble(coord[4]);
-                BSPTreePoly[i].Point2[2] = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки полигона 
+                BSPTreePoly[i].Point2.X = Convert.ToDouble(coord[3]);
+                BSPTreePoly[i].Point2.Y = Convert.ToDouble(coord[4]);
+                BSPTreePoly[i].Point2.Z = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки полигона 
 
                 BSPTreePoly[i].Point3.X = Convert.ToDouble(coord[6]);
                 BSPTreePoly[i].Point3.Y = Convert.ToDouble(coord[7]);
