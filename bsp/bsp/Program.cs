@@ -12,6 +12,7 @@ namespace bsp
         public int indexofotr; // индекс отрезка (для 3d - индекс полигона)
         public BSPNode left;
         public BSPNode right;
+        public BSPTreePolygon Divider; // разделитель
 
         public BSPNode() {
             this.indexofotr = 0;
@@ -79,48 +80,45 @@ namespace bsp
         //http://www.cyberforum.ru/csharp-beginners/thread1127196.html
           static public Point Intersection(Point A, Point B, Point C, Point D) // ищем точку пересечения двух прямых (их задают 2 точки)
           {
-              double xo = A.X, yo = A.Y, zo = A.Z;
-              double p = B.X - A.X, q = B.Y - A.Y, r = B.Z - A.Z;
+              double xo = A.X, yo = A.Y;
+              double p = B.X - A.X, q = B.Y - A.Y;
 
-              double x1 = C.X, y1 = C.Y, z1 = C.Z;
-              double p1 = D.X - C.X, q1 = D.Y - C.Y, r1 = D.Z - C.Z;
+              double x1 = C.X, y1 = C.Y;
+              double p1 = D.X - C.X, q1 = D.Y - C.Y;
 
               double x = (xo * q * p1 - x1 * q1 * p - yo * p * p1 + y1 * p * p1) /
                   (q * p1 - q1 * p);
               double y = (yo * p * q1 - y1 * p1 * q - xo * q * q1 + x1 * q * q1) /
                   (p * q1 - p1 * q);
-              double z = (zo * q * r1 - z1 * q1 * r - yo * r * r1 + y1 * r * r1) /
-                  (q * r1 - q1 * r);
-
-              return new Point(x, y, z);
+             
+              return new Point(x, y);
           } 
     }  
+    
+    public  class BSPTreePolygon { // Отрезок
+
+        public Point Point1;       // Вершина 1 в отрезке.
+        public Point Point2;       // Вершина 2 в отрезке.       
+       // public double testt;
+        public  BSPTreePolygon() {
+            Point1 = new Point();
+            Point2 = new Point();           
+        }
+
+        }
     public class Point
     {
         public double X { get; set; }
         public double Y { get; set; }
-        public double Z { get; set; }
+
         public Point() { }
-        public Point(double x, double y, double z)
+        public Point(double x, double y)
         {
             X = x;
             Y = y;
-            Z = z;
-        }
-    }
-    public  class BSPTreePolygon {
-
-        public Point Point1;       // Вершина 1 в полигоне.
-        public Point Point2;       // Вершина 2 в полигоне.
-        public Point Point3;       // Вершина 3 в полигоне.
-        public double testt;
-        public  BSPTreePolygon() {
-            Point1 = new Point();
-            Point2 = new Point();
-            Point3 = new Point();
-        }
 
         }
+    }
     
     class Program
     {
@@ -142,7 +140,7 @@ namespace bsp
             string coords = Console.ReadLine();
             string[] coordpov;
             coordpov = coords.Split(new char[] { ' ' });
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)  // Пока оставил для 3х мерного случая
             {
                 try { Convert.ToDouble(coordpov[i]); }
                 catch
@@ -217,15 +215,15 @@ namespace bsp
                 //BSPTreePoly[i].testt = Convert.ToDouble(coord[0]);   
                 BSPTreePoly[i].Point1.X = Convert.ToDouble(coord[0]);                
                 BSPTreePoly[i].Point1.Y = Convert.ToDouble(coord[1]);               
-                BSPTreePoly[i].Point1.Z = Convert.ToDouble(coord[2]); // Заполнили координаты первой точки полигона 
+                // BSPTreePoly[i].Point1.Z = Convert.ToDouble(coord[2]); // Заполнили координаты первой точки отрезка
 
                 BSPTreePoly[i].Point2.X = Convert.ToDouble(coord[3]);
                 BSPTreePoly[i].Point2.Y = Convert.ToDouble(coord[4]);
-                BSPTreePoly[i].Point2.Z = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки полигона 
+                //BSPTreePoly[i].Point2.Z = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки отрезка
 
-                BSPTreePoly[i].Point3.X = Convert.ToDouble(coord[6]);
-                BSPTreePoly[i].Point3.Y = Convert.ToDouble(coord[7]);
-                BSPTreePoly[i].Point3.Z = Convert.ToDouble(coord[8]); // Заполнили координаты третьей точки полигона 
+                //BSPTreePoly[i].Point3.X = Convert.ToDouble(coord[6]);
+                //BSPTreePoly[i].Point3.Y = Convert.ToDouble(coord[7]);
+                //BSPTreePoly[i].Point3.Z = Convert.ToDouble(coord[8]); // Заполнили координаты третьей точки полигона 
 
                 Console.WriteLine(i);
                 i++;
