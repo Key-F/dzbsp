@@ -7,22 +7,27 @@ using System.IO;
 
 namespace bsp
 {
-    public class BSPTreee {
+    public class BSPTree {
         public BSPNode rootnode;
-        BSPTreee(BSPNode root) { rootnode = root; }
+        public BSPTree(BSPNode root) { rootnode = root; }
     }
 
     public class BSPNode {
-        public BSPTreee Tree; // дерево, к которому принадлежит этот узел
-        public int indexofotr; // индекс отрезка (для 3d - индекс полигона)
+        public BSPTree Tree; // дерево, к которому принадлежит этот узел
+        public int indexofNode; // индекс узла, возможно понадобится 
         public BSPNode left;
         public BSPNode right;
-        public BSPTreePolygon Divider; // разделитель
+        //public BSPTreePolygon Divider; // разделитель, т.к. используется отрезок с номером n, то пока это не нужно
         public List<BSPTreePolygon> PolygonSet { get; set; } // Набор отрезков 
         public BSPNode() {
-            this.indexofotr = 0;
+            this.indexofNode = 0;
             this.left = null;
             this.right = null;
+        }
+        public BSPNode(BSPTree Tree, List<BSPTreePolygon> PolygonSet, int indexofNode) {
+            this.Tree = Tree;
+            this.PolygonSet = PolygonSet;
+            this.indexofNode = indexofNode;
         }
         public void AddNode(BSPTreePolygon adding) { // Добавление в список узла новых элементов
             this.PolygonSet.Add(adding);
@@ -32,34 +37,15 @@ namespace bsp
             this.PolygonSet = null;
             this.PolygonSet.Add(set);
         }
+   
+        
 
-   // }
-    /*public class BSPTree {
-        BSPNode root; // Корень
-        BSPTreePolygon Divider;
-        BSPTreePolygon [] PolygonSet;
-        BSPTree RightChild;
-        BSPTree LeftChild;
-        BSPTreePolygon[] RightSet; // Набор отрезков справа
-        BSPTreePolygon[] Leftset; // Набор отрезков слева
-        */
-        public static double[] geturav(Point point1, Point point2)
-        { // получаем коэффициенты общего уравнения
-            double[] urav = new double[3]; // A, B, C
-            urav[0] = point1.Y - point2.Y; // A = y1 - y2
-            urav[1] = point2.X - point1.X; // B = x2 - x1
-            urav[2] = point1.X * point2.Y - point2.X * point1.Y; // C = x1 * y2 - x2 * y1
-            return urav;
-        }
-       /* public BSPTreePolygon[] AddToSet(BSPTreePolygon[] Parent, BSPTreePolygon[] Dobav) // Parent - то, куда добавляем. Dobav - то, что добавляем
-        {
-
-            
-        } */
-        public  void CreateBSPTree(BSPNode root, BSPNode thisNode) { // thisNode - текущий узел дерева           
-            //BSPNode Node = new BSPNode();
+        public  void CreateBSPTree(BSPNode thisNode) { // thisNode - текущий узел дерева           
+            //BSPNode Node = new BSPNode();           
+            indexofNode++; // Увеличим номер
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n]; // Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
+            if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n-1; i++) // До n-1 т.к. элемент n уже взят как разделитель и помещается в текущий узел
              {
@@ -99,7 +85,16 @@ namespace bsp
                  }
 
              }
-             thisNode.SetNode(thisNode.PolygonSet[n]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
+            thisNode.SetNode(thisNode.PolygonSet[n]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
+            if (thisNode.right.PolygonSet.Count > 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
+            {
+                CreateBSPTree(right); 
+            }
+            if (thisNode.left.PolygonSet.Count > 1)
+            {
+                CreateBSPTree(left);
+            }
+            CreateBSPTree(thisNode.Tree.rootnode); // Корень этого дерева
 
         } // Построение дерева 
         void Draw() { } // Алгоритм художника
@@ -118,7 +113,15 @@ namespace bsp
                   (p * q1 - p1 * q);
              
               return new Point(x, y);
-          } 
+          }
+          public static double[] geturav(Point point1, Point point2)
+          { // получаем коэффициенты общего уравнения
+              double[] urav = new double[3]; // A, B, C
+              urav[0] = point1.Y - point2.Y; // A = y1 - y2
+              urav[1] = point2.X - point1.X; // B = x2 - x1
+              urav[2] = point1.X * point2.Y - point2.X * point1.Y; // C = x1 * y2 - x2 * y1
+              return urav;
+          }
     }  
     
     public  class BSPTreePolygon { // Отрезок
