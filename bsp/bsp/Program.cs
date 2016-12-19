@@ -7,29 +7,37 @@ using System.IO;
 
 namespace bsp
 {
+    public class BSPTreee {
+        public BSPNode rootnode;
+        BSPTreee(BSPNode root) { rootnode = root; }
+    }
 
     public class BSPNode {
+        public BSPTreee Tree; // дерево, к которому принадлежит этот узел
         public int indexofotr; // индекс отрезка (для 3d - индекс полигона)
         public BSPNode left;
         public BSPNode right;
         public BSPTreePolygon Divider; // разделитель
-
+        public List<BSPTreePolygon> PolygonSet { get; set; } // Набор отрезков 
         public BSPNode() {
             this.indexofotr = 0;
             this.left = null;
             this.right = null;
         }
+        public void AddNode(BSPTreePolygon adding) { // Добавление в список узла новых элементов
+            this.PolygonSet.Add(adding);
+        }
 
-    }
-    public class BSPTree {
+   // }
+    /*public class BSPTree {
         BSPNode root; // Корень
         BSPTreePolygon Divider;
-        BSPTreePolygon[] PolygonSet;
+        BSPTreePolygon [] PolygonSet;
         BSPTree RightChild;
         BSPTree LeftChild;
         BSPTreePolygon[] RightSet; // Набор отрезков справа
         BSPTreePolygon[] Leftset; // Набор отрезков слева
-
+        */
         public static double[] geturav(Point point1, Point point2)
         { // получаем коэффициенты общего уравнения
             double[] urav = new double[3]; // A, B, C
@@ -43,20 +51,24 @@ namespace bsp
 
             
         } */
-        public BSPTree(BSPNode root, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий
+        public BSPTreee CreateBSPTree(BSPNode root, BSPNode thisNode, BSPTreePolygon Div, int n) { // Div - выбранная разделяющая прямая, n - число линий, thisNode - текущий узел дерева
+           
+            BSPNode Node = new BSPNode();
 
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n; i++)
              {
-                 double Temp1 = divline[0] * PolygonSet[i].Point1.X + divline[1] * PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, для точки 1 отрезка
-                 double Temp2 = divline[0] * PolygonSet[i].Point2.X + divline[1] * PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
+                 double Temp1 = divline[0] * thisNode.PolygonSet[i].Point1.X + divline[1] * thisNode.PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, для точки 1 отрезка
+                 double Temp2 = divline[0] * thisNode.PolygonSet[i].Point2.X + divline[1] * thisNode.PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху от разделяющей прямой 
                  {
+                     Node.right.AddNode(thisNode.PolygonSet[i]);
                      // Добавляем этот отрезок в RightChild (front)
                      //PolygonSet.RightSet = RightSet + PolygonSet[i];
                  }
                  if ((Temp1 < 0) && (Temp2 < 0))
                  {
+                     Node.left.AddNode(thisNode.PolygonSet[i]);
                      // Добавляем этот отрезок в LeftChild (back)
                  }
                  if ((Temp1 >= 0) && (Temp2 < 0)) // Отрезок пересекается разделяющей прямой
