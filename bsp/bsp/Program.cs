@@ -9,7 +9,13 @@ namespace bsp
 {
     public class BSPTree {
         public BSPNode rootnode;
-        public BSPTree(BSPNode root) { rootnode = root; }
+        public BSPTree(BSPNode root) { rootnode = root; } // Пока это не нужно
+
+        public BSPTree(List<BSPTreePolygon> PolygonSet) { // Для создания дерева нам необзодим набор отрезков
+            BSPNode root = new BSPNode(PolygonSet);
+            rootnode = root;
+            root.CreateBSPTree(root);
+        }
     }
 
     public class BSPNode {
@@ -25,6 +31,12 @@ namespace bsp
             this.left = null;
             this.right = null;
         }
+        public BSPNode(List<BSPTreePolygon> PolygonSet) {
+            this.PolygonSet = PolygonSet;
+            this.left = null;
+            this.right = null;
+        }
+
         public BSPNode(BSPTree Tree, List<BSPTreePolygon> PolygonSet, int indexofNode) {
             this.Tree = Tree;
             this.PolygonSet = PolygonSet;
@@ -123,8 +135,8 @@ namespace bsp
              
               return new Point(x, y);
           }
-          public static double[] geturav(Point point1, Point point2)
-          { // получаем коэффициенты общего уравнения
+          public static double[] geturav(Point point1, Point point2) // получаем коэффициенты общего уравнения
+          { 
               double[] urav = new double[3]; // A, B, C
               urav[0] = point1.Y - point2.Y; // A = y1 - y2
               urav[1] = point2.X - point1.X; // B = x2 - x1
@@ -137,7 +149,6 @@ namespace bsp
 
         public Point Point1;       // Вершина 1 в отрезке.
         public Point Point2;       // Вершина 2 в отрезке.       
-       // public double testt;
         public  BSPTreePolygon() {
             Point1 = new Point();
             Point2 = new Point();           
@@ -178,7 +189,7 @@ namespace bsp
             string coords = Console.ReadLine();
             string[] coordpov;
             coordpov = coords.Split(new char[] { ' ' });
-            for (int i = 0; i < 3; i++)  // Пока оставил для 3х мерного случая
+            for (int i = 0; i < 2; i++)  // 2х мерный случай
             {
                 try { Convert.ToDouble(coordpov[i]); }
                 catch
@@ -203,9 +214,9 @@ namespace bsp
             }
             try
             {
-                if (coordpov[3] != null)
+                if (coordpov[2] != null)
                 {
-                    Console.WriteLine("Нужно ввести только 3 числа");
+                    Console.WriteLine("Нужно ввести только 2 числа");
                     VVodCoordPOV(); // Обратно к вводу координат наблюдателя
                 }
             }
@@ -221,53 +232,39 @@ namespace bsp
             string[] coordpov = VVodCoordPOV();
             
             //BSPTreePoly[1]
+            //List <BSPTreePolygon> BSPTreePolygon = getcoords(FileName);
             BSPTreePolygon[] BSPTreePolygon = getcoords(FileName);
+            var Polylist = BSPTreePolygon.Cast<BSPTreePolygon>().ToList();
+            BSPTree T1 = new BSPTree(Polylist);
 
+           // BSPTree T1 = new BSPTree(BSPTreePolygon[1]);
 
         }
-        // потом перенести geturav
-        public static int[] geturav(int[] ycoords, int[] xcoords) { // получаем коэффициенты общего уравнения
-            int[] urav = new int[3]; // A, B, C
-            urav[0] = ycoords[0] - ycoords[1]; // A = y1 - y2
-            urav[1] = xcoords[1] - xcoords[0]; // B = x2 - x1
-            urav[2] = xcoords[0] * ycoords[1] - xcoords[1] * ycoords[0]; // C = x1 * y2 - x2 * y1
-            return urav;        
-        }
-
-
+        
         public static BSPTreePolygon[] getcoords(string FileName)
         {
 
-            string[] lines = File.ReadAllLines(FileName);
+            string[] lines = File.ReadAllLines(FileName); // Получение координат
             string[] coord;
             int i = 0; // Счетчик для полигонов
-            // int k = 0; // Счетчик для координат
             int count = System.IO.File.ReadAllLines(FileName).Length; // Количество строк в файле
             BSPTreePolygon[] BSPTreePoly = new BSPTreePolygon[count]; // Массив полигонов
-            foreach (string s in lines) {
-
+            foreach (string s in lines)
+            {
                 coord = s.Split(new char[] { ' ' });
 
-                BSPTreePoly[i] = new BSPTreePolygon();
-                //double teee = Convert.ToDouble(coord[0]); 
-                //BSPTreePoly[i].testt = Convert.ToDouble(coord[0]);   
-                BSPTreePoly[i].Point1.X = Convert.ToDouble(coord[0]);                
-                BSPTreePoly[i].Point1.Y = Convert.ToDouble(coord[1]);               
-                // BSPTreePoly[i].Point1.Z = Convert.ToDouble(coord[2]); // Заполнили координаты первой точки отрезка
-
+                BSPTreePoly[i] = new BSPTreePolygon();                
+                  
+                BSPTreePoly[i].Point1.X = Convert.ToDouble(coord[0]);
+                BSPTreePoly[i].Point1.Y = Convert.ToDouble(coord[1]); // Заполнили координаты первой точки отрезка
+                
                 BSPTreePoly[i].Point2.X = Convert.ToDouble(coord[3]);
-                BSPTreePoly[i].Point2.Y = Convert.ToDouble(coord[4]);
-                //BSPTreePoly[i].Point2.Z = Convert.ToDouble(coord[5]); // Заполнили координаты второй точки отрезка
-
-                //BSPTreePoly[i].Point3.X = Convert.ToDouble(coord[6]);
-                //BSPTreePoly[i].Point3.Y = Convert.ToDouble(coord[7]);
-                //BSPTreePoly[i].Point3.Z = Convert.ToDouble(coord[8]); // Заполнили координаты третьей точки полигона 
-
-                Console.WriteLine(i);
+                BSPTreePoly[i].Point2.Y = Convert.ToDouble(coord[4]); // Заполнили координаты второй точки отрезка
+                             
+                Console.WriteLine(i); 
                 i++;
             }
-            return BSPTreePoly;
-            Console.ReadLine();
-       }
+            return BSPTreePoly;           
+        }
 }
 }
