@@ -67,7 +67,7 @@ namespace bsp
             thisNode.PolygonSet = PolySet;
             //BSPNode Node = new BSPNode();           
             //indexofNode++; // Увеличим номер
-            right = new BSPNode();
+           // right = new BSPNode();
             left = new BSPNode();
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n-1]; // (индекс начинается с 0) Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
@@ -80,14 +80,14 @@ namespace bsp
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
                  {
                      //BSPNodeBSPNode right = new BSPNode(Tree); // Создаем узел справа
-                     if (thisNode.right != null)
-                     {
+                     thisNode.right = new BSPNode();
+                     
                          if (thisNode.right.PolygonSet != null)
                          {
                              thisNode.right.PolygonSet.Add(thisNode.PolygonSet[i]);
                          }
                          else thisNode.right.SetNode(thisNode.PolygonSet[i]);
-                     }
+                     
                      //thisNode.right.AddNode(thisNode.PolygonSet[i]); // Добавляем этот отрезок в RightChild (front)
 
                  }
