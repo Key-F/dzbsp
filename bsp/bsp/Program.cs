@@ -68,7 +68,8 @@ namespace bsp
             //BSPNode Node = new BSPNode();           
             //indexofNode++; // Увеличим номер
            // right = new BSPNode();
-            left = new BSPNode();
+            thisNode.right = new BSPNode();
+            thisNode.left = new BSPNode();
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n-1]; // (индекс начинается с 0) Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
             if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); thisNode.parent = null; } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
@@ -80,8 +81,7 @@ namespace bsp
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
                  {
                      //BSPNodeBSPNode right = new BSPNode(Tree); // Создаем узел справа
-                     thisNode.right = new BSPNode();
-                     
+                                        
                          if (thisNode.right.PolygonSet != null)
                          {
                              thisNode.right.PolygonSet.Add(thisNode.PolygonSet[i]);
@@ -94,58 +94,69 @@ namespace bsp
                  if ((Temp1 < 0) && (Temp2 < 0)) // Если A*x+B*y+C<0 для обоих точек т.е. отрезок снизу(слева) от разделяющей прямой
                  {
                      //thisNode.left.AddNode(thisNode.PolygonSet[i]); // Добавляем этот отрезок в LeftChild (back)
-                     if (thisNode.left != null) // Против этого: Ссылка на объект не указывает на экземпляр объекта.
-                     {
+                     
                          if (thisNode.left.PolygonSet != null)
                          {
                              thisNode.left.PolygonSet.Add(thisNode.PolygonSet[i]);
                          }
                          else thisNode.left.SetNode(thisNode.PolygonSet[i]);
-                     }
+        
                  }
                  if ((Temp1 >= 0) && (Temp2 < 0)) // Отрезок пересекается разделяющей прямой
                  {                   
-                     Point DivPoint = Intersection(Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
-                     Point Temp = PolygonSet[i].Point2; // Сохраним, чтобы не потерять
-                     PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
+                     Point DivPoint = Intersection(Div.Point1, Div.Point2, thisNode.PolygonSet[i].Point1, thisNode.PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
+                     Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
+                     thisNode.PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
                     
                      //thisNode.right.AddNode(thisNode.PolygonSet[i]); // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в RightChild (front)
-                     if (thisNode.right != null)
-                     {
+                     
                          if (thisNode.right.PolygonSet != null)
                          {
                              thisNode.right.PolygonSet.Add(thisNode.PolygonSet[i]);
                          }
                          else thisNode.right.SetNode(thisNode.PolygonSet[i]);
-                     }
+                    
 
-                     PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
+                     thisNode.PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
                      Temp = PolygonSet[i].Point1; // Сохраним первую точку
-                     PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
+                     thisNode.PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
                     
                      //thisNode.left.AddNode(thisNode.PolygonSet[i]);// Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в LeftChild (back) 
-                     if (thisNode.left != null)
-                     {
+                     
                          if (thisNode.left.PolygonSet != null)
                          {
                              thisNode.left.PolygonSet.Add(thisNode.PolygonSet[i]);
                          }
                          else thisNode.left.SetNode(thisNode.PolygonSet[i]);
-                     }
-                     PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем
+                     
+                     thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем
                  }  
-                /* if ((Temp1 < 0) && (Temp2 >= 0)) // Отрезок пересекается разделяющей прямой
+                 if ((Temp1 < 0) && (Temp2 >= 0)) // Отрезок пересекается разделяющей прямой
                  {
-                     Point DivPoint = Intersection(Div.Point1, Div.Point2, PolygonSet[i].Point1, PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
-                     Point Temp = PolygonSet[i].Point2; // Сохраним, чтобы не потерять
-                     PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
-                     thisNode.left.AddNode(thisNode.PolygonSet[i]); // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в LeftChild (back)
-                     PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
-                     Temp = PolygonSet[i].Point1; // Сохраним первую точку
-                     PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
-                     thisNode.right.AddNode(thisNode.PolygonSet[i]);// Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в RightChild (front)  
-                     PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем                                         
-                 } */
+                     Point DivPoint = Intersection(Div.Point1, Div.Point2, thisNode.PolygonSet[i].Point1, thisNode.PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
+                     Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
+                     thisNode.PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
+
+                     //thisNode.left.AddNode(thisNode.PolygonSet[i]); // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в LeftChild (back)
+                     if (thisNode.left.PolygonSet != null)
+                     {
+                         thisNode.left.PolygonSet.Add(thisNode.PolygonSet[i]);
+                     }
+                     else thisNode.left.SetNode(thisNode.PolygonSet[i]);
+
+                     thisNode.PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
+                     Temp = thisNode.PolygonSet[i].Point1; // Сохраним первую точку
+                     thisNode.PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
+
+                     //thisNode.right.AddNode(thisNode.PolygonSet[i]);// Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в RightChild (front)
+                     if (thisNode.right.PolygonSet != null)
+                     {
+                         thisNode.right.PolygonSet.Add(thisNode.PolygonSet[i]);
+                     }
+                     else thisNode.right.SetNode(thisNode.PolygonSet[i]);
+  
+                     thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем                                         
+                 } 
 
              }
             BSPNode Right = new BSPNode(thisNode.Tree, thisNode.right.PolygonSet); // Создаем узел справа // Добавить parent мб
