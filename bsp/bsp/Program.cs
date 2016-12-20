@@ -15,6 +15,7 @@ namespace bsp
     public class BSPNode {
         public BSPTree Tree; // дерево, к которому принадлежит этот узел
         public int indexofNode; // индекс узла, возможно понадобится 
+        public BSPNode parent;
         public BSPNode left;
         public BSPNode right;
         //public BSPTreePolygon Divider; // разделитель, т.к. используется отрезок с номером n, то пока это не нужно
@@ -28,6 +29,10 @@ namespace bsp
             this.Tree = Tree;
             this.PolygonSet = PolygonSet;
             this.indexofNode = indexofNode;
+        }
+        public BSPNode(BSPTree Tree)
+        {
+            this.Tree = Tree;           
         }
         public void AddNode(BSPTreePolygon adding) { // Добавление в список узла новых элементов
             this.PolygonSet.Add(adding);
@@ -45,7 +50,7 @@ namespace bsp
             indexofNode++; // Увеличим номер
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n]; // Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
-            if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
+            if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); thisNode.parent = null; } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n-1; i++) // До n-1 т.к. элемент n уже взят как разделитель и помещается в текущий узел
              {
@@ -53,7 +58,9 @@ namespace bsp
                  double Temp2 = divline[0] * thisNode.PolygonSet[i].Point2.X + divline[1] * thisNode.PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
                  if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
                  {
+                     //BSPNodeBSPNode right = new BSPNode(Tree); // Создаем узел справа
                      thisNode.right.AddNode(thisNode.PolygonSet[i]); // Добавляем этот отрезок в RightChild (front)
+
                  }
                  if ((Temp1 < 0) && (Temp2 < 0)) // Если A*x+B*y+C<0 для обоих точек т.е. отрезок снизу(слева) от разделяющей прямой
                  {
@@ -85,14 +92,16 @@ namespace bsp
                  }
 
              }
+            BSPNode Right = new BSPNode(thisNode.Tree, thisNode.right.PolygonSet,indexofNode); // Создаем узел справа // Добавить parent мб
+            BSPNode Left = new BSPNode(thisNode.Tree, thisNode.left.PolygonSet, indexofNode); // Создаем узел слева
             thisNode.SetNode(thisNode.PolygonSet[n]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
             if (thisNode.right.PolygonSet.Count > 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
             {
-                CreateBSPTree(right); 
+                CreateBSPTree(Right); 
             }
             if (thisNode.left.PolygonSet.Count > 1)
             {
-                CreateBSPTree(left);
+                CreateBSPTree(Left);
             }
             CreateBSPTree(thisNode.Tree.rootnode); // Корень этого дерева
 
