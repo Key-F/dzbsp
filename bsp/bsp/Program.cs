@@ -53,7 +53,7 @@ namespace bsp
         }
 
         public void SetNode(BSPTreePolygon set) { // Добавить отрезок, удалив все стальное
-            PolygonSet = new List<BSPTreePolygon>();
+            //PolygonSet = new List<BSPTreePolygon>();
             //this.PolygonSet = null;
             this.PolygonSet.Add(set);
         }
@@ -71,6 +71,8 @@ namespace bsp
            // right = new BSPNode();
             thisNode.right = new BSPNode();
             thisNode.left = new BSPNode();
+            thisNode.right.PolygonSet = new List<BSPTreePolygon>();
+            thisNode.left.PolygonSet = new List<BSPTreePolygon>();
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n-1]; // (индекс начинается с 0) Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
             if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); /*thisNode.parent = null;*/ } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
@@ -79,18 +81,21 @@ namespace bsp
              {
                  double Temp1 = divline[0] * thisNode.PolygonSet[i].Point1.X + divline[1] * thisNode.PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, для точки 1 отрезка
                  double Temp2 = divline[0] * thisNode.PolygonSet[i].Point2.X + divline[1] * thisNode.PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
-                 if ((Temp1 >= 0) && (Temp2 >= 0)) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
+                 if (((Temp1 > 0) && (Temp2 >= 0))||((Temp1 >= 0) && (Temp2 > 0))) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
                  {
+                     Console.WriteLine("Были в 1");
                      //BSPNodeBSPNode right = new BSPNode(Tree); // Создаем узел справа
                      BSPTreePolygon r1 = new BSPTreePolygon();
                      r1 = thisNode.PolygonSet[i]; // Чтобы не менялся мб везде добавить
-                     Console.WriteLine(Temp1);            
-                         if (thisNode.right.PolygonSet != null)
-                         {
-                             thisNode.right.PolygonSet.Add(r1);
-                         }
-                         else thisNode.right.SetNode(r1);
+
+                     if (thisNode.right.PolygonSet != null)
+                     {
+                         thisNode.right.PolygonSet.Add(r1);
+                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);
+                     }
+                     else thisNode.right.SetNode(r1);
                          
+                     
                      //thisNode.right.AddNode(thisNode.PolygonSet[i]); // Добавляем этот отрезок в RightChild (front)
 
                  }
@@ -98,48 +103,57 @@ namespace bsp
                  {
                      //thisNode.left.AddNode(thisNode.PolygonSet[i]); // Добавляем этот отрезок в LeftChild (back)
                      Console.WriteLine("Были в 2");
+                     BSPTreePolygon l11 = new BSPTreePolygon();
+                     l11 = thisNode.PolygonSet[i]; // Чтобы не менялся мб везде добавить
                          if (thisNode.left.PolygonSet != null)
                          {
-                             thisNode.left.PolygonSet.Add(thisNode.PolygonSet[i]);
+                             thisNode.left.PolygonSet.Add(l11);
                          }
-                         else thisNode.left.SetNode(thisNode.PolygonSet[i]);
+                         else thisNode.left.SetNode(l11);
+                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);     
         
                  }
                  if ((Temp1 >= 0) && (Temp2 < 0)) // Отрезок пересекается разделяющей прямой
                  {
                      Console.WriteLine("Были в 3");
                      Point DivPoint = Intersection(Div.Point1, Div.Point2, thisNode.PolygonSet[i].Point1, thisNode.PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
-                     Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
-                     thisNode.PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
+                     BSPTreePolygon l21 = new BSPTreePolygon();
+                     l21.Point1 = thisNode.PolygonSet[i].Point1;
+                     l21.Point2 = DivPoint; // Чтобы не изменялся результат
+                     //Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
+                    // thisNode.PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
                     
                      //thisNode.right.AddNode(thisNode.PolygonSet[i]); // Добавляем отрезок (PolygonSet[i].Point1, Divpoint) в RightChild (front)
                      
                          if (thisNode.right.PolygonSet != null)
                          {
-                             thisNode.right.PolygonSet.Add(thisNode.PolygonSet[i]);
+                             thisNode.right.PolygonSet.Add(l21);
                          }
-                         else thisNode.right.SetNode(thisNode.PolygonSet[i]);
+                         else thisNode.right.SetNode(l21);
                     
 
-                     thisNode.PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
-                     Temp = PolygonSet[i].Point1; // Сохраним первую точку
-                     thisNode.PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
+                     //thisNode.PolygonSet[i].Point2 = Temp; // Вернули исходное значние точки 2
+                     //Temp = thisNode.PolygonSet[i].Point1; // Сохраним первую точку
+                     //thisNode.PolygonSet[i].Point1 = DivPoint; // Заменим первую точку отрезка на точку пересечения
                     
                      //thisNode.left.AddNode(thisNode.PolygonSet[i]);// Добавляем отрезок (Divpoint, PolygonSet[i].Point2) в LeftChild (back) 
+                         l21.Point2 = thisNode.PolygonSet[i].Point2;
+                         l21.Point1 = DivPoint; // Чтобы не изменялся результат
                      
                          if (thisNode.left.PolygonSet != null)
                          {
-                             thisNode.left.PolygonSet.Add(thisNode.PolygonSet[i]);
+                             thisNode.left.PolygonSet.Add(l21);
                          }
-                         else thisNode.left.SetNode(thisNode.PolygonSet[i]);
+                         else thisNode.left.SetNode(l21);
                      
-                     thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем
+                     //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем
+                     Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);     
                  }  
                  if ((Temp1 < 0) && (Temp2 >= 0)) // Отрезок пересекается разделяющей прямой
                  {
                      Console.WriteLine("Были в 4");
                      Point DivPoint = Intersection(Div.Point1, Div.Point2, thisNode.PolygonSet[i].Point1, thisNode.PolygonSet[i].Point2); // Получаем пресечение отрезка и разделяющей прямой(заданной двумя точками)
-                     Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
+                     //Point Temp = thisNode.PolygonSet[i].Point2; // Сохраним, чтобы не потерять
                      //thisNode.PolygonSet[i].Point2 = DivPoint; // Заменим вторую точку отрезка на точку пересечения
                      BSPTreePolygon l1 = new BSPTreePolygon();
                      l1.Point1 = thisNode.PolygonSet[i].Point1;
@@ -164,7 +178,8 @@ namespace bsp
                      }
                      else thisNode.right.SetNode(l2);
   
-                     //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем                                         
+                     //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем      
+                     Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);                   
                  } 
 
              }
