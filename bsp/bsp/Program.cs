@@ -19,8 +19,9 @@ namespace bsp
     }
 
     public class BSPNode {
+        public BSPTreePolygon value; // Какой отрезок оставим в этом узле
         public BSPTree Tree; // дерево, к которому принадлежит этот узел
-       // public int indexofNode; // индекс узла, возможно понадобится 
+        public int indexofNode; // индекс узла, возможно понадобится 
        // public BSPNode parent;
         public BSPNode left;
         public BSPNode right;
@@ -36,6 +37,12 @@ namespace bsp
             this.PolygonSet = PolygonSet;
             this.left = null;
             this.right = null;
+        }
+
+        public BSPNode(BSPNode getNode) {
+            this.PolygonSet = getNode.PolygonSet;
+            this.Tree = getNode.Tree;
+
         }
 
         public BSPNode(BSPTree Tree, List<BSPTreePolygon> PolygonSet) {
@@ -63,11 +70,11 @@ namespace bsp
         //public  void CreateBSPTree(BSPNode thisNode) { // thisNode - текущий узел дерева   
         // This class represents a node of a BSP tree. We construct a BSP tree recursively by keeping a reference to a root node and adding to each node a left and/or right son.
         // There is no empty node, a leaf is a node that doesn't have any son.
-        public BSPNode CreateBSPTree(List<BSPTreePolygon> PolySet)
+        public BSPNode CreateBSPTree(BSPNode getNode)
         {
-            if (PolySet == null) return null;
-            BSPNode thisNode = new BSPNode();
-            thisNode.PolygonSet = PolySet;
+            if (getNode.PolygonSet.Count == null) return null; // Если подали пустой список отрезков
+            BSPNode thisNode = new BSPNode(getNode);
+            //thisNode.PolygonSet = PolySet;
             if (thisNode.Tree == null)
             {
                 BSPTree Tree = new BSPTree(thisNode);
@@ -190,27 +197,30 @@ namespace bsp
                      //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем      
                      //Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count + " i: " + i);                   
                  }
-                 
-                 Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right:" + thisNode.right.PolygonSet.Count + " Кол-во left:" + thisNode.left.PolygonSet.Count + " i:" + i + " n:" + n);
+
+                 Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right:" + thisNode.right.PolygonSet.Count + " Кол-во left:" + thisNode.left.PolygonSet.Count + " i:" + i + " n:" + n + " Count:" + thisNode.Tree.rootnode.PolygonSet.Count);
 
              }
              Console.WriteLine("_________________________________________________________________________");
             //BSPNode Right = new BSPNode(thisNode.Tree, thisNode.right.PolygonSet); // Создаем узел справа // Добавить parent мб // это лишнее
             //BSPNode Left = new BSPNode(thisNode.Tree, thisNode.left.PolygonSet); // Создаем узел слева
-            thisNode.SetNode(thisNode.PolygonSet[n-1]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
-            if (thisNode.Tree == null) { 
+             List<BSPTreePolygon> SecondList = new List<BSPTreePolygon>(thisNode.PolygonSet); // Нам не нужна ссылка на объект
+            // thisNode.PolygonSet.Clear();
+            // thisNode.SetNode(SecondList[n-1]);//    = thisNode.PolygonSet[n - 1]; // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
+            // if (thisNode.Tree.rootnode.PolygonSet.Count > 1) thisNode.Tree.rootnode.SetNode(SecondList[n - 1]); // thisNode.Tree.rootnode.PolygonSet.AddRange(SecondList); На первом проходе кладем в корень последний отрезок
+            /*if (thisNode.Tree == null) { 
                 BSPTree Tree = new BSPTree(thisNode);
                 thisNode.Tree = Tree;
-            } 
+            }  */
             if (thisNode.right.PolygonSet.Count > 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
             {
-                CreateBSPTree(thisNode.right.PolygonSet); 
+                CreateBSPTree(thisNode.right); 
             }
-            if (thisNode.left.PolygonSet.Count > 1)
+           if (thisNode.left.PolygonSet.Count > 1)
             {
-                CreateBSPTree(thisNode.left.PolygonSet);
+                CreateBSPTree(thisNode.left);
             }
-            CreateBSPTree(thisNode.Tree.rootnode.PolygonSet); // Корень этого дерева
+         //   CreateBSPTree(thisNode.Tree.rootnode.PolygonSet); // Корень этого дерева
             return thisNode;
 
         } // Построение дерева 
@@ -335,9 +345,9 @@ namespace bsp
             //List <BSPTreePolygon> BSPTreePolygon = getcoords(FileName);
             BSPTreePolygon[] BSPTreePolygon = getcoords(FileName);
             var Polylist = BSPTreePolygon.Cast<BSPTreePolygon>().ToList(); // Делаем из массива список; Тут все ок
-            BSPNode pp = new BSPNode();
+            BSPNode pp = new BSPNode(Polylist); //Инициализируем списком отрезков
             //BSPTree T1 = new BSPTree(Polylist);
-            pp.CreateBSPTree(Polylist);
+            pp.CreateBSPTree(pp);
            // BSPTree T1 = new BSPTree(BSPTreePolygon[1]);
 
         }
