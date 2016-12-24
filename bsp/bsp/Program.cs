@@ -61,26 +61,35 @@ namespace bsp
         
 
         //public  void CreateBSPTree(BSPNode thisNode) { // thisNode - текущий узел дерева   
+        // This class represents a node of a BSP tree. We construct a BSP tree recursively by keeping a reference to a root node and adding to each node a left and/or right son.
+        // There is no empty node, a leaf is a node that doesn't have any son.
         public BSPNode CreateBSPTree(List<BSPTreePolygon> PolySet)
         {
             if (PolySet == null) return null;
             BSPNode thisNode = new BSPNode();
             thisNode.PolygonSet = PolySet;
+            if (thisNode.Tree == null)
+            {
+                BSPTree Tree = new BSPTree(thisNode);
+                thisNode.Tree = Tree;
+            } 
             //BSPNode Node = new BSPNode();           
             //indexofNode++; // Увеличим номер
            // right = new BSPNode();
-            thisNode.right = new BSPNode();
-            thisNode.left = new BSPNode();
+            thisNode.right = new BSPNode(thisNode.Tree); // указываем на дерево, которому принадлежат узлы
+            thisNode.left = new BSPNode(thisNode.Tree);
             thisNode.right.PolygonSet = new List<BSPTreePolygon>();
             thisNode.left.PolygonSet = new List<BSPTreePolygon>();
             int n = thisNode.PolygonSet.Count; // Сколько отрезков в этом узле
             BSPTreePolygon Div = thisNode.PolygonSet[n-1]; // (индекс начинается с 0) Берем последний отрезок из списка и делаем его разделителем (на данный момент выбор оптимального разделителя не преследуется)
-            if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); /*thisNode.parent = null;*/ } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
+            //if (thisNode.Tree == null) { BSPTree Tree = new BSPTree(thisNode); /*thisNode.parent = null;*/ } // Если дерева еще не существует, то создаем его и делаем корнем текущий Node
              double[] divline = geturav(Div.Point1, Div.Point2); // получаем коэффициенты уравнения прямой (по двум её точкам)
              for (int i = 0; i < n; i++) // До n-1 т.к. элемент n уже взят как разделитель и помещается в текущий узел !!!!!!!!!! либо от 1 до n-1 либо от 0 до n, тогда нет ошибки
              {
                  double Temp1 = divline[0] * thisNode.PolygonSet[i].Point1.X + divline[1] * thisNode.PolygonSet[i].Point1.Y + divline[2]; // A*x+B*y+C временная переменная для удобства, для точки 1 отрезка
                  double Temp2 = divline[0] * thisNode.PolygonSet[i].Point2.X + divline[1] * thisNode.PolygonSet[i].Point2.Y + divline[2]; // аналогично, но для второй точки отрезка
+                 Temp1 = Math.Round(Temp1, 2, MidpointRounding.AwayFromZero); // Округление
+                 Temp2 = Math.Round(Temp2, 2, MidpointRounding.AwayFromZero); // Округление
                  if (((Temp1 > 0) && (Temp2 >= 0))||((Temp1 >= 0) && (Temp2 > 0))) // Если A*x+B*y+C>=0 для обоих точек т.е. отрезок сверху(справа) от разделяющей прямой 
                  {
                      Console.WriteLine("Были в 1");
@@ -181,12 +190,18 @@ namespace bsp
                      //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем      
                      //Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count + " i: " + i);                   
                  }
+                 
                  Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right:" + thisNode.right.PolygonSet.Count + " Кол-во left:" + thisNode.left.PolygonSet.Count + " i:" + i + " n:" + n);
 
              }
+             Console.WriteLine("_________________________________________________________________________");
             //BSPNode Right = new BSPNode(thisNode.Tree, thisNode.right.PolygonSet); // Создаем узел справа // Добавить parent мб // это лишнее
             //BSPNode Left = new BSPNode(thisNode.Tree, thisNode.left.PolygonSet); // Создаем узел слева
             thisNode.SetNode(thisNode.PolygonSet[n-1]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
+            if (thisNode.Tree == null) { 
+                BSPTree Tree = new BSPTree(thisNode);
+                thisNode.Tree = Tree;
+            } 
             if (thisNode.right.PolygonSet.Count > 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
             {
                 CreateBSPTree(thisNode.right.PolygonSet); 
