@@ -91,7 +91,7 @@ namespace bsp
                      if (thisNode.right.PolygonSet != null)
                      {
                          thisNode.right.PolygonSet.Add(r1);
-                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);
+                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count+" i: "+i);
                      }
                      else thisNode.right.SetNode(r1);
                          
@@ -110,7 +110,7 @@ namespace bsp
                              thisNode.left.PolygonSet.Add(l11);
                          }
                          else thisNode.left.SetNode(l11);
-                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);     
+                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count + " i: " + i);     
         
                  }
                  if ((Temp1 >= 0) && (Temp2 < 0)) // Отрезок пересекается разделяющей прямой
@@ -147,7 +147,7 @@ namespace bsp
                          else thisNode.left.SetNode(l21);
                      
                      //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем
-                     Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);     
+                         Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count + " i: " + i);     
                  }  
                  if ((Temp1 < 0) && (Temp2 >= 0)) // Отрезок пересекается разделяющей прямой
                  {
@@ -179,18 +179,18 @@ namespace bsp
                      else thisNode.right.SetNode(l2);
   
                      //thisNode.PolygonSet[i].Point1 = Temp; // Вернули исходный вид PolygonSet[i], хз зачем      
-                     Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count);                   
+                     Console.WriteLine(Temp1 + " " + Temp2 + " Кол-во right: " + thisNode.right.PolygonSet.Count + " Кол-во left: " + thisNode.left.PolygonSet.Count + " i: " + i);                   
                  } 
 
              }
             //BSPNode Right = new BSPNode(thisNode.Tree, thisNode.right.PolygonSet); // Создаем узел справа // Добавить parent мб // это лишнее
             //BSPNode Left = new BSPNode(thisNode.Tree, thisNode.left.PolygonSet); // Создаем узел слева
             thisNode.SetNode(thisNode.PolygonSet[n-1]); // Оставляем в этом узле отрезок, который был разделителем, делаем это в конце, т.к. удаляет набор отрезков у узла
-            if (thisNode.right.PolygonSet.Count > 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
+            if (thisNode.right.PolygonSet.Count >= 1) // Если у правого потомка больше 1 отрезка, необходимо их разделить
             {
                 CreateBSPTree(thisNode.right.PolygonSet); 
             }
-            if (thisNode.left.PolygonSet.Count > 1)
+            if (thisNode.left.PolygonSet.Count >= 1)
             {
                 CreateBSPTree(thisNode.left.PolygonSet);
             }
